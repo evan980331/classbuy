@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { ShoppingCart, History, LayoutDashboard, Package, Truck, Store, Shield, ChevronDown, Users } from "lucide-react";
+import { ShoppingCart, History, LayoutDashboard, Package, Truck, Store, Shield, ChevronDown, Users, LogIn, LogOut } from "lucide-react";
 
 const mainLinks = [
   { href: "/", label: "商品", icon: Store },
@@ -20,8 +20,21 @@ const adminLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const isAdminActive = adminLinks.some(l => pathname === l.href);
+
+  useEffect(()=>{
+    fetch("/api/auth/me").then(r=>r.json()).then(d=>setUser(d.user)).catch(()=>{});
+  },[pathname]);
+
+  const logout = async()=>{
+    await fetch("/api/auth/logout",{method:"POST"});
+    setUser(null);
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
@@ -38,8 +51,6 @@ export function Navbar() {
               </Link>
             );
           })}
-
-          {/* 管理員單一選單 */}
           <div className="relative">
             <button
               onClick={() => setOpen(!open)}
@@ -65,6 +76,14 @@ export function Navbar() {
               </div>
             )}
           </div>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm hidden md:inline">{user.seatNo ? `${user.seatNo}號` : ""} {user.name}</span>
+              <button onClick={logout} className="px-3 py-1.5 rounded-md text-sm flex items-center gap-1 border hover:bg-muted"><LogOut size={14}/> 登出</button>
+            </div>
+          ) : (
+            <Link href="/login" className="px-3 py-1.5 rounded-md text-sm flex items-center gap-1 border hover:bg-muted"><LogIn size={14}/> 登入</Link>
+          )}
         </nav>
       </div>
     </header>

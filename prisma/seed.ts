@@ -19,7 +19,10 @@ async function main() {
   ];
   for (const im of images) await prisma.productImage.create({ data: im });
   await prisma.user.create({ data: { name: "admin", role: "ADMIN" } });
-  for (let i = 1; i <= 34; i++) await prisma.user.create({ data: { name: "座號" + i, seatNo: i, role: "USER" } });
+  for (let i = 1; i <= 35; i++) {
+    if (i === 9) continue;
+    await prisma.user.create({ data: { name: "座號" + i, seatNo: i, role: "USER" } });
+  }
   const products = [
     { name: "碗裝泡麵", price: 35, cost: 22, stock: 30, imageUrl: images[0].url },
     { name: "運動飲料", price: 30, cost: 18, stock: 50, imageUrl: images[1].url },

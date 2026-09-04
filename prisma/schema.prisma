@@ -17,6 +17,7 @@ model User {
   id        String   @id @default(cuid())
   name      String   @unique
   seatNo    Int?     @unique
+  password  String?
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   orders    Order[]

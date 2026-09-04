@@ -3,11 +3,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { ShoppingCart, History, LayoutDashboard, Package, Truck, Store, Shield, ChevronDown, Users, LogIn, LogOut } from "lucide-react";
+import { History, LayoutDashboard, Package, Truck, Store, Shield, ChevronDown, Users, LogIn, LogOut } from "lucide-react";
 
 const mainLinks = [
-  { href: "/", label: "商品", icon: Store },
-  { href: "/checkout", label: "結帳", icon: ShoppingCart },
+  { href: "/", label: "商品目錄", icon: Store },
   { href: "/history", label: "紀錄", icon: History },
 ];
 
@@ -71,8 +70,6 @@ export function Navbar() {
                     <a.icon size={16} /> {a.label}
                   </Link>
                 ))}
-                <div className="border-t my-1" />
-                <div className="px-3 py-1 text-xs text-muted-foreground">PIN 預設 1234</div>
               </div>
             )}
           </div>

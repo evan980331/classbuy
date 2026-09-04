@@ -1,20 +1,25 @@
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import QuickOrder from "./quick-order";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [products, users] = await Promise.all([
+  const userId = cookies().get("user_auth")?.value;
+  if (!userId) redirect("/login");
+  const [products, user] = await Promise.all([
     prisma.product.findMany({ where: { isActive: true }, orderBy: { createdAt: "desc" } }),
-    prisma.user.findMany({ orderBy: [{ seatNo: "asc" }, { name: "asc" }] }),
+    prisma.user.findUnique({ where: { id: userId } }),
   ]);
+  if (!user) redirect("/login");
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">班級小賣部 - 商品目錄</h1>
-        <p className="text-sm text-muted-foreground">卡片式瀏覽 · 庫存為 0 顯示「已售罄」並禁用購買 · 選取使用者後快速下單</p>
+        <h1 className="text-2xl font-bold">班級小賣部</h1>
+        <p className="text-sm text-muted-foreground">目錄在左，結帳區在右側邊緣</p>
       </div>
-      <QuickOrder products={products} users={users} />
+      <QuickOrder products={products} currentUser={user} />
     </div>
   );
 }

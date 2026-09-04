@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { createProduct, toggleProductStatus, updateProduct } from "@/app/actions/product";
 import { useRouter } from "next/navigation";
+import { ImagePicker } from "@/components/image-picker";
 
 export default function ProductsClient({ products }: { products: any[] }) {
   const router = useRouter();
@@ -32,17 +33,18 @@ export default function ProductsClient({ products }: { products: any[] }) {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">商品與庫存管理</h1>
-      <p className="text-sm text-muted-foreground">自由增加物品、設定售價/成本、上下架與盤點庫存。密碼預設 1234 已啟用。</p>
-
       <Card>
         <CardHeader><CardTitle>新增商品</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid md:grid-cols-2 gap-3">
             <div><Label>名稱 *</Label><Input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="例：麵包" /></div>
-            <div><Label>圖片 URL</Label><Input value={form.imageUrl} onChange={e=>setForm({...form,imageUrl:e.target.value})} placeholder="https://..." /></div>
             <div><Label>售價 *</Label><Input type="number" value={form.price} onChange={e=>setForm({...form,price:e.target.value})} placeholder="25" /></div>
             <div><Label>成本 *</Label><Input type="number" value={form.cost} onChange={e=>setForm({...form,cost:e.target.value})} placeholder="15" /></div>
             <div><Label>初始庫存</Label><Input type="number" value={form.stock} onChange={e=>setForm({...form,stock:e.target.value})} placeholder="40" /></div>
+          </div>
+          <div>
+            <Label>圖片</Label>
+            <ImagePicker value={form.imageUrl} onChange={url=>setForm({...form, imageUrl: url})} />
           </div>
           {msg && <div className="text-sm p-2 bg-muted rounded">{msg}</div>}
           <Button onClick={onCreate} disabled={pending}>{pending ? "處理中..." : "新增商品"}</Button>
@@ -90,17 +92,15 @@ function ProductRow({ p }: { p: any }) {
     <Card>
       <CardContent className="pt-4 space-y-3">
         <div className="flex justify-between items-center">
-          <span className="font-medium">{p.name}</span>
+          <span className="font-medium flex items-center gap-2">{p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-8 h-8 object-cover rounded" />}{p.name}</span>
           {p.isActive ? <Badge>上架</Badge> : <Badge variant="secondary">下架</Badge>}
         </div>
         <div className="text-sm text-muted-foreground">目前：售價 {p.price} / 成本 {p.cost} / 庫存 {p.stock}</div>
-
         <div className="grid grid-cols-3 gap-2">
           <div><Label className="text-xs">售價</Label><Input type="number" value={price} onChange={e=>setPrice(e.target.value)} className="h-8" /></div>
           <div><Label className="text-xs">成本</Label><Input type="number" value={cost} onChange={e=>setCost(e.target.value)} className="h-8" /></div>
           <div className="flex items-end"><Button size="sm" className="w-full" disabled={pending} onClick={savePrice}>儲存價格</Button></div>
         </div>
-
         <div className="flex gap-2 items-end">
           <div className="flex-1"><Label className="text-xs">盤點庫存</Label><Input type="number" value={stock} onChange={e=>setStock(e.target.value)} className="h-8" /></div>
           <Button size="sm" variant="outline" disabled={pending} onClick={saveStock}>修正庫存</Button>

@@ -2,9 +2,6 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-/**
- * restockProduct - 進貨：累加庫存、更新成本、寫入 RestockLog
- */
 export async function restockProduct(productId: string, quantity: number, unitCost: number) {
   if (!productId) throw new Error("請選擇商品");
   if (!Number.isFinite(quantity) || quantity <= 0) throw new Error("進貨數量需大於 0");
@@ -14,10 +11,7 @@ export async function restockProduct(productId: string, quantity: number, unitCo
     await prisma.$transaction(async (tx) => {
       const p = await tx.product.findUnique({ where: { id: productId } });
       if (!p) throw new Error("商品不存在");
-      await tx.product.update({
-        where: { id: productId },
-        data: { stock: { increment: quantity }, cost: unitCost },
-      });
+      await tx.product.update({ where: { id: productId }, data: { stock: { increment: quantity }, cost: unitCost } });
       await tx.restockLog.create({ data: { productId, quantity, unitCost, totalCost } });
     });
     revalidatePath("/admin/restock");

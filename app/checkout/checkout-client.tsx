@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { createOrder } from "@/app/actions/order";
 
 type Product = { id: string; name: string; price: number; stock: number };
-type User = { id: string; name: string };
+type User = { id: string; name: string; seatNo: number | null };
 
 export default function CheckoutClient({ products, users }: { products: Product[]; users: User[] }) {
   const [userId, setUserId] = useState(users[0]?.id || "");
@@ -53,7 +53,7 @@ export default function CheckoutClient({ products, users }: { products: Product[
           <CardContent>
             <Label>姓名</Label>
             <Select value={userId} onChange={(e) => setUserId(e.target.value)}>
-              {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+              {users.map((u) => <option key={u.id} value={u.id}>{u.seatNo ? `${u.seatNo}號 ${u.name}` : u.name}</option>)}
             </Select>
             {users.length === 0 && <p className="text-sm text-destructive mt-2">尚未建立使用者，請先執行 seed</p>}
           </CardContent>

@@ -16,6 +16,7 @@ enum Role {
 model User {
   id        String   @id @default(cuid())
   name      String   @unique
+  seatNo    Int?     @unique
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   orders    Order[]
@@ -24,8 +25,8 @@ model User {
 model Product {
   id          String       @id @default(cuid())
   name        String
-  price       Int // 售價
-  cost        Int // 最新進貨成本
+  price       Int
+  cost        Int
   stock       Int          @default(0)
   imageUrl    String?
   isActive    Boolean      @default(true)
@@ -33,6 +34,13 @@ model Product {
   updatedAt   DateTime     @updatedAt
   orderItems  OrderItem[]
   restockLogs RestockLog[]
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  label     String
+  url       String
+  createdAt DateTime @default(now())
 }
 
 model RestockLog {
@@ -61,5 +69,5 @@ model OrderItem {
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
-  price     Int // 購買時單價
+  price     Int
 }

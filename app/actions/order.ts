@@ -4,35 +4,23 @@ import { revalidatePath } from "next/cache";
 
 type CartItem = { productId: string; quantity: number };
 
-/**
- * createOrder - 使用 transaction 包裹扣減庫存與寫入訂單
- * 庫存不足時拋錯自動 Rollback
- */
 export async function createOrder(userId: string, items: CartItem[]) {
   if (!userId) throw new Error("請選擇使用者");
   if (!items?.length) throw new Error("購物車為空");
-
   try {
     return await prisma.$transaction(async (tx) => {
       let totalAmount = 0;
       const orderItemsData: { productId: string; quantity: number; price: number }[] = [];
-
       for (const item of items) {
         if (item.quantity <= 0) throw new Error("數量必須大於 0");
         const product = await tx.product.findUnique({ where: { id: item.productId } });
         if (!product) throw new Error(`商品不存在: ${item.productId}`);
         if (!product.isActive) throw new Error(`商品已下架: ${product.name}`);
         if (product.stock < item.quantity) throw new Error(`庫存不足: ${product.name} 剩餘 ${product.stock}，需求 ${item.quantity}`);
-
-        await tx.product.update({
-          where: { id: product.id },
-          data: { stock: { decrement: item.quantity } },
-        });
-
+        await tx.product.update({ where: { id: product.id }, data: { stock: { decrement: item.quantity } } });
         totalAmount += product.price * item.quantity;
         orderItemsData.push({ productId: product.id, quantity: item.quantity, price: product.price });
       }
-
       const order = await tx.order.create({
         data: { userId, totalAmount, items: { create: orderItemsData } },
         include: { items: true },
@@ -40,7 +28,6 @@ export async function createOrder(userId: string, items: CartItem[]) {
       return order;
     });
   } catch (e: any) {
-    // 透出錯誤讓前端顯示
     throw new Error(e.message || "建立訂單失敗");
   }
 }
@@ -61,8 +48,9 @@ export async function checkoutAction(_prev: any, formData: FormData) {
 }
 
 export async function getUsers() {
-  return prisma.user.findMany({ orderBy: { name: "asc" } });
+  return prisma.user.findMany({ orderBy: { seatNo: "asc" } });
 }
+
 export async function getOrdersByUser(userId: string) {
   return prisma.order.findMany({
     where: { userId },

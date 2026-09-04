@@ -3,10 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getProducts(activeOnly = false) {
-  return prisma.product.findMany({
-    where: activeOnly ? { isActive: true } : undefined,
-    orderBy: { createdAt: "desc" },
-  });
+  return prisma.product.findMany({ where: activeOnly ? { isActive: true } : undefined, orderBy: { createdAt: "desc" } });
 }
 
 export async function createProduct(formData: FormData) {
@@ -46,9 +43,6 @@ export async function updateProduct(id: string, formData: FormData) {
   }
 }
 
-/**
- * toggleProductStatus - 規格要求名稱，切換 isActive
- */
 export async function toggleProductStatus(id: string) {
   try {
     const p = await prisma.product.findUnique({ where: { id } });
@@ -61,7 +55,7 @@ export async function toggleProductStatus(id: string) {
     throw new Error(e.message);
   }
 }
-// 相容舊名稱
+
 export const toggleProductActive = toggleProductStatus;
 
 export async function adjustStock(id: string, stock: number) {
@@ -69,4 +63,8 @@ export async function adjustStock(id: string, stock: number) {
   await prisma.product.update({ where: { id }, data: { stock } });
   revalidatePath("/");
   revalidatePath("/admin/products");
+}
+
+export async function getProductImages() {
+  return prisma.productImage.findMany({ orderBy: { createdAt: "asc" } });
 }

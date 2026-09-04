@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ShoppingCart, History, LayoutDashboard, Package, Truck, Store, Shield, ChevronDown } from "lucide-react";
+import { ShoppingCart, History, LayoutDashboard, Package, Truck, Store, Shield, ChevronDown, Users } from "lucide-react";
 
 const mainLinks = [
   { href: "/", label: "商品", icon: Store },
@@ -15,6 +15,7 @@ const adminLinks = [
   { href: "/admin/dashboard", label: "財務看板", icon: LayoutDashboard },
   { href: "/admin/products", label: "商品管理", icon: Package },
   { href: "/admin/restock", label: "進貨管理", icon: Truck },
+  { href: "/admin/users", label: "座號管理", icon: Users },
 ];
 
 export function Navbar() {

@@ -9,7 +9,7 @@ import { createOrder } from "@/app/actions/order";
 import { useRouter } from "next/navigation";
 
 type Product = { id: string; name: string; price: number; stock: number; imageUrl: string | null };
-type User = { id: string; name: string };
+type User = { id: string; name: string; seatNo: number | null };
 
 export default function QuickOrder({ products, users }: { products: Product[]; users: User[] }) {
   const [userId, setUserId] = useState(users[0]?.id || "");
@@ -57,7 +57,7 @@ export default function QuickOrder({ products, users }: { products: Product[]; u
               <Label>選取使用者（快速下單）</Label>
               <Select value={userId} onChange={e=>setUserId(e.target.value)}>
                 <option value="">-- 請選擇 --</option>
-                {users.map(u=> <option key={u.id} value={u.id}>{u.name}</option>)}
+                {users.map(u=> <option key={u.id} value={u.id}>{u.seatNo ? `${u.seatNo}號 ${u.name}` : u.name}</option>)}
               </Select>
             </div>
             <div className="text-sm text-muted-foreground">已選 {items.length} 項 · 總計 NT$ {total}</div>
@@ -86,7 +86,6 @@ export default function QuickOrder({ products, users }: { products: Product[]; u
                 </div>
                 <Button disabled={p.stock===0} className="w-full" variant={p.stock===0?"secondary":"default"} onClick={()=>{
                   if (!cart[p.id]) add(p.id);
-                  // 提示
                   if (!userId) setMsg({type:"error", text:"請先選取使用者再加入購物車"});
                 }}>
                   {p.stock===0 ? "已售罄" : cart[p.id] ? `已選 ${cart[p.id]}` : "加入購物車"}
@@ -109,7 +108,7 @@ export default function QuickOrder({ products, users }: { products: Product[]; u
             <div className="border-t pt-2 flex justify-between font-bold"><span>總計</span><span>NT$ {total}</span></div>
             {msg && <div className={`text-sm p-2 rounded ${msg.type==="success"?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{msg.text}</div>}
             <Button className="w-full" onClick={onOrder} disabled={pending}>{pending?"處理中...":"確認下單"}</Button>
-            <p className="text-xs text-muted-foreground">採 DB Transaction：扣減庫存與建立 Order/OrderItem 原子完成，庫存不足自動 Rollback。</p>
+            <p className="text-xs text-muted-foreground">下單時將同時更新庫存與建立訂單。</p>
           </CardContent>
         </Card>
       </div>

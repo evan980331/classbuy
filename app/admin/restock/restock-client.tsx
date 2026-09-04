@@ -31,7 +31,7 @@ export default function RestockClient({ products, logs }: any) {
       <h1 className="text-2xl font-bold">進貨管理</h1>
       <Card><CardHeader><CardTitle>新增進貨</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <div><Label>商品</Label><Select value={productId} onChange={e=>setProductId(e.target.value)}>{products.map((p:any)=><option key={p.id} value={p.id}>{p.name} (庫存 {p.stock} / 成本 {p.cost})</option>)}</Select></div>
+          <div><Label>商品</Label><Select value={productId} onChange={e=>setProductId(e.target.value)}>{products.map((p:any)=><option key={p.id} value={p.id}>{p.name} (庫存 {p.stock} / 售價 NT$ {p.price})</option>)}</Select></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>數量</Label><Input type="number" value={qty} onChange={e=>setQty(Number(e.target.value))} /></div>
             <div><Label>單件成本</Label><Input type="number" value={cost} onChange={e=>setCost(Number(e.target.value))} /></div>

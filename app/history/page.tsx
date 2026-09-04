@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import HistoryClient from "./history-client";
 export const dynamic = "force-dynamic";
 export default async function HistoryPage({ searchParams }: { searchParams: { userId?: string } }) {
-  const users = await prisma.user.findMany({ orderBy: { name: "asc" } });
+  const users = await prisma.user.findMany({ orderBy: [{ seatNo: "asc" }, { name: "asc" }] });
   const selectedUserId = searchParams.userId || users[0]?.id || "";
   const orders = selectedUserId
     ? await prisma.order.findMany({ where: { userId: selectedUserId }, include: { items: { include: { product: true } }, user: true }, orderBy: { createdAt: "desc" } })

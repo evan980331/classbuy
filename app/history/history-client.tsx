@@ -11,7 +11,7 @@ export default function HistoryClient({ users, selectedUserId, orders, totalSpen
         <CardContent className="pt-4 flex gap-4 items-center">
           <span className="text-sm font-medium">選擇使用者</span>
           <Select value={selectedUserId} onChange={(e) => router.push(`/history?userId=${e.target.value}`)}>
-            {users.map((u: any) => <option key={u.id} value={u.id}>{u.name}</option>)}
+            {users.map((u: any) => <option key={u.id} value={u.id}>{u.seatNo ? `${u.seatNo}號 ${u.name}` : u.name}</option>)}
           </Select>
           <span className="ml-auto font-bold">消費總額: NT$ {totalSpent.toLocaleString()}</span>
         </CardContent>

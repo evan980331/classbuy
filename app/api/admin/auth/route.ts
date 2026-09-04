@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  // 供除錯：不洩露密碼，只回是否已設定
   const hasPin = !!process.env.ADMIN_PIN;
   const hasSecret = !!process.env.ADMIN_SECRET;
   return NextResponse.json({ hasPin, hasSecret });

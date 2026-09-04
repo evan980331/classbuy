@@ -28,14 +28,14 @@ export default function UsersClient({ users }: { users: any[] }) {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">座號管理</h1>
-      <p className="text-sm text-muted-foreground">設定 1~34 號座號，坐號需唯一。admin 可在此設定。</p>
+      <p className="text-sm text-muted-foreground">設定 1~35 號座號（9 號已刪除），座號需唯一。admin 可在此設定。</p>
 
       <Card>
         <CardHeader><CardTitle>新增使用者</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid md:grid-cols-3 gap-3">
             <div><Label>姓名</Label><Input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="例：王小明" /></div>
-            <div><Label>座號 (1~34)</Label><Input type="number" value={form.seatNo} onChange={e=>setForm({...form,seatNo:e.target.value})} placeholder="留空表示未分配" /></div>
+            <div><Label>座號 (1~35 不含9)</Label><Input type="number" value={form.seatNo} onChange={e=>setForm({...form,seatNo:e.target.value})} placeholder="留空表示未分配" /></div>
             <div><Label>角色</Label>
               <Select value={form.role} onChange={e=>setForm({...form, role: e.target.value as any})}>
                 <option value="USER">USER</option>
@@ -83,7 +83,7 @@ function UserRow({ u }: { u: any }) {
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div><Label className="text-xs">姓名</Label><Input value={name} onChange={e=>setName(e.target.value)} className="h-8" /></div>
-          <div><Label className="text-xs">座號</Label><Input type="number" value={seat} onChange={e=>setSeat(e.target.value)} placeholder="1~34" className="h-8" /></div>
+          <div><Label className="text-xs">座號</Label><Input type="number" value={seat} onChange={e=>setSeat(e.target.value)} placeholder="1~35不含9" className="h-8" /></div>
         </div>
         <div className="flex gap-2">
           <Button size="sm" disabled={pending} onClick={save}>儲存</Button>

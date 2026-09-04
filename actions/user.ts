@@ -7,7 +7,7 @@ export async function getUsersWithSeat() {
 }
 
 export async function updateUserSeat(id: string, seatNo: number | null) {
-  if (seatNo !== null && (seatNo < 1 || seatNo > 34)) throw new Error("座號需介於 1~34");
+  if (seatNo !== null && (seatNo < 1 || seatNo > 35 || seatNo === 9)) throw new Error("座號需為 1~35 且不可為 9");
   if (seatNo !== null) {
     const exists = await prisma.user.findUnique({ where: { seatNo } });
     if (exists && exists.id !== id) throw new Error(`座號 ${seatNo} 已被 ${exists.name} 使用`);
@@ -30,7 +30,7 @@ export async function updateUserName(id: string, name: string) {
 export async function createUser(name: string, seatNo: number | null, role: "USER" | "ADMIN" = "USER") {
   const n = name.trim();
   if (!n) throw new Error("姓名不可為空");
-  if (seatNo !== null && (seatNo < 1 || seatNo > 34)) throw new Error("座號需介於 1~34");
+  if (seatNo !== null && (seatNo < 1 || seatNo > 35 || seatNo === 9)) throw new Error("座號需為 1~35 且不可為 9");
   await prisma.user.create({ data: { name: n, seatNo, role } });
   revalidatePath("/admin/users");
 }

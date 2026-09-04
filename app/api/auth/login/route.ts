@@ -12,7 +12,10 @@ export async function POST(req: NextRequest) {
   if (user.name.trim() !== String(name).trim()) return NextResponse.json({ error: "姓名與座號不符" }, { status: 401 });
 
   if (!user.password) {
-    if (!setPassword) {
+    if (!password && !setPassword) {
+      return NextResponse.json({ needSetPassword: true });
+    }
+    if (password && !setPassword) {
       return NextResponse.json({ needSetPassword: true });
     }
     if (!password || String(password).length < 4) return NextResponse.json({ error: "密碼至少4字元" }, { status: 400 });
@@ -23,6 +26,9 @@ export async function POST(req: NextRequest) {
     return res;
   }
 
+  if (password === undefined && !setPassword) {
+    return NextResponse.json({ needSetPassword: false, hasPassword: true });
+  }
   if (!password) return NextResponse.json({ error: "請輸入密碼" }, { status: 400 });
   const ok = await bcrypt.compare(String(password), user.password);
   if (!ok) return NextResponse.json({ error: "密碼錯誤" }, { status: 401 });

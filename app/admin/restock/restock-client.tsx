@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import { restockProduct } from "@/actions/restock";
+import { restockProduct } from "@/app/actions/restock";
 import { useRouter } from "next/navigation";
 
 export default function RestockClient({ products, logs }: any) {

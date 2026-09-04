@@ -5,22 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { createProduct, toggleProductActive } from "@/actions/product";
+import { createProduct, toggleProductStatus } from "@/app/actions/product";
 import { useRouter } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 
 export default function ProductsClient({ products }: { products: any[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [form, setForm] = useState({ name: "", price: "", cost: "", stock: "", imageUrl: "" });
 
+  const [msg, setMsg] = useState<string|null>(null);
   const onCreate = () => {
     const fd = new FormData();
     Object.entries(form).forEach(([k,v])=>fd.set(k, v));
     start(async ()=>{
-      await createProduct(fd);
-      setForm({ name:"", price:"", cost:"", stock:"", imageUrl:"" });
-      router.refresh();
+      try{ await createProduct(fd); setMsg("新增成功"); setForm({ name:"", price:"", cost:"", stock:"", imageUrl:"" }); router.refresh(); }catch(e:any){ setMsg(e.message); }
     });
   };
 
@@ -36,6 +34,7 @@ export default function ProductsClient({ products }: { products: any[] }) {
             <div><Label>成本</Label><Input type="number" value={form.cost} onChange={e=>setForm({...form,cost:e.target.value})} /></div>
             <div><Label>初始庫存</Label><Input type="number" value={form.stock} onChange={e=>setForm({...form,stock:e.target.value})} /></div>
           </div>
+          {msg && <div className="text-sm p-2 bg-muted rounded">{msg}</div>}
           <Button onClick={onCreate} disabled={pending}>新增</Button>
         </CardContent>
       </Card>
@@ -47,7 +46,7 @@ export default function ProductsClient({ products }: { products: any[] }) {
               <div className="flex justify-between"><span className="font-medium">{p.name}</span>{p.isActive ? <Badge>上架</Badge> : <Badge variant="secondary">下架</Badge>}</div>
               <div className="text-sm text-muted-foreground">售價 {p.price} / 成本 {p.cost} / 庫存 {p.stock}</div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={()=> start(async()=>{ await toggleProductActive(p.id); router.refresh(); })}>{p.isActive?"下架":"上架"}</Button>
+                <Button size="sm" variant="outline" onClick={()=> start(async()=>{ try{ await toggleProductStatus(p.id); }catch(e:any){ alert(e.message);} router.refresh(); })}>{p.isActive?"下架":"上架"}</Button>
                 <StockAdjust id={p.id} stock={p.stock} />
               </div>
             </CardContent>
